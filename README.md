@@ -1,1 +1,1 @@
-# smartrecruiters-slack-notifications
+# SmartRecruitersApp
