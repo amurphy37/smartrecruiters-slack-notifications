@@ -29,6 +29,12 @@ const UserSchema = new Schema({
     },
     slackUserAuthToken: {
         type: String
+    },
+    smartKey: {
+        type: String
+    },
+    smartCompanyID: {
+        type: String
     }
 },
     {

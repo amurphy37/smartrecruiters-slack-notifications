@@ -7,6 +7,7 @@ import SlackApp from "./addToSlack"
 import PrivateRoute from "./privateRoute"
 import SlackAppRedirect from "./slackAppRedirect"
 import Home from "./home"
+import SmartKey from "./smartKey"
 
 function Main(props) {
     return (
@@ -15,6 +16,7 @@ function Main(props) {
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={LogIn} />
             <PrivateRoute exact path="/addSlack" component={SlackApp} />
+            <PrivateRoute exact path="/smartKey" component={SmartKey} />
             <Route exact path="/slackAppAdd" component={SlackAppRedirect} />
             <Route exact path="/home" component={Home} />
 

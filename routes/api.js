@@ -3,9 +3,6 @@ const router = express.Router()
 const Axios = require("axios")
 const qs = require("qs")
 
-const smartKey = require("../api_keys/apiKeys")
-const companyID = "CrandallBoosterAndDurkLLC"
-
 const inProduction = process.env.NODE_ENV === "production"
 
 // Accessing our models and passport for login/signup 
@@ -103,7 +100,7 @@ router.post("/slackAuth", async (req, res) => {
         }
 
         let responseBody = {
-            redir: "/home"
+            redir: "/smartKey"
         }
 
 
@@ -119,18 +116,22 @@ router.post("/slackAuth", async (req, res) => {
     }
 })
 
+router.post("/smartAuth", (req, res) => {
+    console.log(req.user)
 
-router.get("/jobPostings", (req, res) => {
-
-    const postingURL = "https://api.smartrecruiters.com/v1/companies/" + companyID + "/postings"
-
-    Axios.get(postingURL)
+    const update = { 
+        smartKey: req.body.smartKey,
+        smartCompanyID: req.body.companyIdentifier  
+    }
+    const id = req.user._id
+    const options = {new: true}
+    
+    db.User.findByIdAndUpdate(id, update, options)
         .then(response => {
-            const jobs = response.data.content
-            console.log(jobs)
-        })
+            console.log(response)
+            res.status(200).send("success")
 
-    res.status(200).send("succesful request")
+        })
 })
 
 router.post("/smartWebhook", (req, res) => {
@@ -140,13 +141,28 @@ router.post("/smartWebhook", (req, res) => {
     res.status(200).send("success!")
 })
 
-router.post("/jobCreated", async (req, res) => {
+router.post("/jobCreated/:companyId", async (req, res) => {
 
     try {
 
         const hookSecret = req.headers["x-hook-secret"]
         res.set("X-Hook-Secret", hookSecret)
         res.status(200).send("success!")
+
+        console.log(req.params)
+
+        const webCompanyID = req.params.companyId
+
+        const filter = {
+            smartCompanyID: webCompanyID,
+            smartKey: { $ne: null }
+        }
+
+        const dbUser = await db.User.findOne(filter)
+
+        console.log(dbUser)
+
+        const smartKey = dbUser.smartKey
 
         const jobID = req.body.id
 
