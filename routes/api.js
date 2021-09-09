@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-// const Axios = require("axios")
+const Axios = require("axios")
 const qs = require("qs")
 
 const inProduction = process.env.NODE_ENV === "production"
@@ -45,7 +45,7 @@ router.post("/signup", function (req, res) {
 // If the user has valid login credentials, send them to the members page.
 // Otherwise the user will be sent an error
 router.post(
-    "/api/loginlogin",
+    "/login",
     passport.authenticate("local"),
     (req, res) => {
         console.log(req.user)
@@ -135,28 +135,15 @@ router.post("/smartAuth", (req, res) => {
 })
 
 router.post("/smartWebhook", (req, res) => {
-    console.log(req.body)
 
     const hookSecret = req.headers["x-hook-secret"]
     res.set("X-Hook-Secret", hookSecret)
     res.status(200).send("success!")
 })
 
-router.post("/jobCreated", async (req, res) => {
-    try {
-        console.log(res.body)
-    }
-    catch {
-        console.log(err.message)
-
-    }
-})
-
 router.post("/jobCreated/:companyId", async (req, res) => {
 
     try {
-
-        console.log (req.body)
 
         const hookSecret = req.headers["x-hook-secret"]
         res.set("X-Hook-Secret", hookSecret)
@@ -175,7 +162,7 @@ router.post("/jobCreated/:companyId", async (req, res) => {
 
         console.log(dbUser)
 
-        const smartKey = "DCRA1-508de08834a14350bab3892dfdb22bae"
+        const smartKey = dbUser.smartKey
 
         const jobID = req.body.id
 
