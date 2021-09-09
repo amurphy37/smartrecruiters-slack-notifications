@@ -119,28 +119,28 @@ router.post("/slackAuth", async (req, res) => {
 router.post("/smartAuth", (req, res) => {
     console.log(req.user)
 
-    const update = { 
-        smartKey: req.body.smartKey,
-        smartCompanyID: req.body.companyIdentifier  
-    }
-    const id = req.user._id
-    const options = {new: true}
+    // const update = { 
+    //     smartKey: req.body.smartKey,
+    //     smartCompanyID: req.body.companyIdentifier  
+    // }
+    // const id = req.user._id
+    // const options = {new: true}
     
-    db.User.findByIdAndUpdate(id, update, options)
-        .then(response => {
-            console.log(response)
-            res.status(200).send("success")
+    // db.User.findByIdAndUpdate(id, update, options)
+    //     .then(response => {
+    //         console.log(response)
+    //         res.status(200).send("success")
 
-        })
+    //     })
 })
 
-router.post("/smartWebhook", (req, res) => {
-    console.log(req.body)
+// router.post("/smartWebhook", (req, res) => {
+//     console.log(req.body)
 
-    const hookSecret = req.headers["x-hook-secret"]
-    res.set("X-Hook-Secret", hookSecret)
-    res.status(200).send("success!")
-})
+//     const hookSecret = req.headers["x-hook-secret"]
+//     res.set("X-Hook-Secret", hookSecret)
+//     res.status(200).send("success!")
+// })
 
 // router.post("/jobCreated", async (req, res) => {
 //     try {

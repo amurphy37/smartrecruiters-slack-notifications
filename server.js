@@ -55,7 +55,7 @@ else {
 
     // Connecting Mongoose and displaying in console that it's connected on success
     mongoose.connect(connectionString, options)
-}
+
 
 const db = mongoose.connection
 
@@ -103,3 +103,5 @@ if (inProductionEnvironment) {
 
 // Tell the user which port app is running on when successfully up and running.
 app.listen(PORT, console.log(`Server is starting at ${PORT}`))
+
+}
