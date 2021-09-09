@@ -146,6 +146,8 @@ router.post("/jobCreated/:companyId", async (req, res) => {
 
     try {
 
+        console.log (req.body)
+
         const hookSecret = req.headers["x-hook-secret"]
         res.set("X-Hook-Secret", hookSecret)
         res.status(200).send("success!")
@@ -163,7 +165,7 @@ router.post("/jobCreated/:companyId", async (req, res) => {
 
         console.log(dbUser)
 
-        const smartKey = dbUser.smartKey
+        const smartKey = "DCRA1-508de08834a14350bab3892dfdb22bae"
 
         const jobID = req.body.id
 
