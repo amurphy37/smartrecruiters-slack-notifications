@@ -59,80 +59,80 @@ router.post(
         }
     });
 
-// router.post("/slackAuth", async (req, res) => {
-//     try {
+router.post("/slackAuth", async (req, res) => {
+    try {
 
-//         const slackAuthURL = "https://slack.com/api/oauth.v2.access"
+        const slackAuthURL = "https://slack.com/api/oauth.v2.access"
 
-//         var slackRedirect_uri
+        var slackRedirect_uri
 
-//         if (inProduction) {
-//                 slackRedirect_uri = "https://smartrecruitersslack.herokuapp.com/slackAppAdd"
+        if (inProduction) {
+                slackRedirect_uri = "https://smartrecruitersslack.herokuapp.com/slackAppAdd"
 
-//             }
+            }
 
-//         else {
-//                 slackRedirect_uri = "http://localhost:3000/slackAppAdd"
-//         }
+        else {
+                slackRedirect_uri = "http://localhost:3000/slackAppAdd"
+        }
 
-//         const body = qs.stringify({
-//             code: req.body.code,
-//             client_id: "273664409857.1607139541536",
-//             client_secret: "491b448938dec8513e1b27fbf603cd68",
-//             redirect_uri: slackRedirect_uri
-//         })
+        const body = qs.stringify({
+            code: req.body.code,
+            client_id: "273664409857.1607139541536",
+            client_secret: "491b448938dec8513e1b27fbf603cd68",
+            redirect_uri: slackRedirect_uri
+        })
 
-//         const slackRequest = await Axios.post(slackAuthURL, body, {
-//             headers:
-//             {
-//                 "Content-Type": "application/x-www-form-urlencoded"
-//             }
-//         })
+        const slackRequest = await Axios.post(slackAuthURL, body, {
+            headers:
+            {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        })
 
-//         console.log(slackRequest)
+        console.log(slackRequest)
 
-//         let dbSlackAuthBody = {
-//             slackAppAuthToken: slackRequest.data.access_token,
-//             slackUserAuthToken: slackRequest.data.authed_user.access_token,
-//             slackUserID: slackRequest.data.authed_user.id,
-//             slackWorkspaceID: slackRequest.data.team.id
+        let dbSlackAuthBody = {
+            slackAppAuthToken: slackRequest.data.access_token,
+            slackUserAuthToken: slackRequest.data.authed_user.access_token,
+            slackUserID: slackRequest.data.authed_user.id,
+            slackWorkspaceID: slackRequest.data.team.id
 
-//         }
+        }
 
-//         let responseBody = {
-//             redir: "/smartKey"
-//         }
+        let responseBody = {
+            redir: "/smartKey"
+        }
 
 
-//         const dbUserUpdate = await db.User.findByIdAndUpdate(req.user._id, dbSlackAuthBody , { new: true })
+        const dbUserUpdate = await db.User.findByIdAndUpdate(req.user._id, dbSlackAuthBody , { new: true })
 
-//         console.log(dbUserUpdate)
+        console.log(dbUserUpdate)
 
-//         res.json(responseBody)
+        res.json(responseBody)
         
-//     }
-//     catch (error) {
-//         console.log(error)
-//     }
-// })
+    }
+    catch (error) {
+        console.log(error)
+    }
+})
 
-// router.post("/smartAuth", (req, res) => {
-//     console.log(req.user)
+router.post("/smartAuth", (req, res) => {
+    console.log(req.user)
 
-//     const update = { 
-//         smartKey: req.body.smartKey,
-//         smartCompanyID: req.body.companyIdentifier  
-//     }
-//     const id = req.user._id
-//     const options = {new: true}
+    const update = { 
+        smartKey: req.body.smartKey,
+        smartCompanyID: req.body.companyIdentifier  
+    }
+    const id = req.user._id
+    const options = {new: true}
     
-//     db.User.findByIdAndUpdate(id, update, options)
-//         .then(response => {
-//             console.log(response)
-//             res.status(200).send("success")
+    db.User.findByIdAndUpdate(id, update, options)
+        .then(response => {
+            console.log(response)
+            res.status(200).send("success")
 
-//         })
-// })
+        })
+})
 
 router.post("/smartWebhook", (req, res) => {
     console.log(req.body)
