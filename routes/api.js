@@ -142,6 +142,16 @@ router.post("/smartWebhook", (req, res) => {
     res.status(200).send("success!")
 })
 
+router.post("/jobCreated", async (req, res) => {
+    try {
+        console.log(res.body)
+    }
+    catch {
+        console.log(err.message)
+
+    }
+})
+
 router.post("/jobCreated/:companyId", async (req, res) => {
 
     try {
