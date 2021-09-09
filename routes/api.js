@@ -135,6 +135,7 @@ router.post("/smartAuth", (req, res) => {
 })
 
 router.post("/smartWebhook", (req, res) => {
+    console.log(req.body)
 
     const hookSecret = req.headers["x-hook-secret"]
     res.set("X-Hook-Secret", hookSecret)
@@ -346,7 +347,7 @@ router.post("/jobCreated/:companyId", async (req, res) => {
                     blocks: queryBlocks
                 })
 
-                const notification = await Axios.post("https://slack.com/api/chat.postMessage", body, {
+                await Axios.post("https://slack.com/api/chat.postMessage", body, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/x-www-form-urlencoded"
