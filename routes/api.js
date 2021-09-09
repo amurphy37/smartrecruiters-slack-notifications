@@ -45,7 +45,7 @@ router.post("/signup", function (req, res) {
 // If the user has valid login credentials, send them to the members page.
 // Otherwise the user will be sent an error
 router.post(
-    "/login",
+    "/api/login",
     passport.authenticate("local"),
     (req, res) => {
         console.log(req.user)
@@ -142,247 +142,247 @@ router.post("/smartWebhook", (req, res) => {
     res.status(200).send("success!")
 })
 
-router.post("/jobCreated", async (req, res) => {
-    try {
-        console.log(res.body)
-    }
-    catch {
-        console.log(err.message)
+// router.post("/jobCreated", async (req, res) => {
+//     try {
+//         console.log(res.body)
+//     }
+//     catch {
+//         console.log(err.message)
 
-    }
-})
+//     }
+// })
 
-router.post("/jobCreated/:companyId", async (req, res) => {
+// router.post("/jobCreated/:companyId", async (req, res) => {
 
-    try {
+//     try {
 
-        console.log (req.body)
+//         console.log (req.body)
 
-        const hookSecret = req.headers["x-hook-secret"]
-        res.set("X-Hook-Secret", hookSecret)
-        res.status(200).send("success!")
+//         const hookSecret = req.headers["x-hook-secret"]
+//         res.set("X-Hook-Secret", hookSecret)
+//         res.status(200).send("success!")
 
-        console.log(req.params)
+//         console.log(req.params)
 
-        const webCompanyID = req.params.companyId
+//         const webCompanyID = req.params.companyId
 
-        const filter = {
-            smartCompanyID: webCompanyID,
-            smartKey: { $ne: null }
-        }
+//         const filter = {
+//             smartCompanyID: webCompanyID,
+//             smartKey: { $ne: null }
+//         }
 
-        const dbUser = await db.User.findOne(filter)
+//         const dbUser = await db.User.findOne(filter)
 
-        console.log(dbUser)
+//         console.log(dbUser)
 
-        const smartKey = "DCRA1-508de08834a14350bab3892dfdb22bae"
+//         const smartKey = "DCRA1-508de08834a14350bab3892dfdb22bae"
 
-        const jobID = req.body.id
+//         const jobID = req.body.id
 
-        // Querying SmartRecruiters API to get Job Title and Location
+//         // Querying SmartRecruiters API to get Job Title and Location
 
-        const jobInfoQueryURL = "https://api.smartrecruiters.com/jobs/" + jobID
+//         const jobInfoQueryURL = "https://api.smartrecruiters.com/jobs/" + jobID
 
-        const jobInfoQuery = await Axios.get(jobInfoQueryURL, {
-            headers: {
-                "X-SmartToken": smartKey
-            }
-        })
+//         const jobInfoQuery = await Axios.get(jobInfoQueryURL, {
+//             headers: {
+//                 "X-SmartToken": smartKey
+//             }
+//         })
 
-        const linkToJob = "https://www.smartrecruiters.com/app/jobs/details/" + jobID
+//         const linkToJob = "https://www.smartrecruiters.com/app/jobs/details/" + jobID
 
-        const jobTitle = jobInfoQuery.data.title
-        const jobLocation = jobInfoQuery.data.location.city + ", " + jobInfoQuery.data.location.region
-        console.log(jobTitle)
+//         const jobTitle = jobInfoQuery.data.title
+//         const jobLocation = jobInfoQuery.data.location.city + ", " + jobInfoQuery.data.location.region
+//         console.log(jobTitle)
 
-        console.log(jobLocation)
+//         console.log(jobLocation)
 
-        // Querying SmartRecruiters API to get Hiring Team Members
+//         // Querying SmartRecruiters API to get Hiring Team Members
 
-        const jobQueryURL = "https://api.smartrecruiters.com/jobs/" + jobID + "/hiring-team"
+//         const jobQueryURL = "https://api.smartrecruiters.com/jobs/" + jobID + "/hiring-team"
 
-        const hiringTeamQuery = await Axios.get(jobQueryURL, { 
-            headers: {
-                "X-SmartToken": smartKey
-            } 
-        })
+//         const hiringTeamQuery = await Axios.get(jobQueryURL, { 
+//             headers: {
+//                 "X-SmartToken": smartKey
+//             } 
+//         })
 
-        const hiringTeamMembers = hiringTeamQuery.data.content
+//         const hiringTeamMembers = hiringTeamQuery.data.content
 
-        var hiringManagerURL
+//         var hiringManagerURL
 
-        for (i=0; i < hiringTeamMembers.length; i++) {
-            const currentMember = hiringTeamMembers[i]
+//         for (i=0; i < hiringTeamMembers.length; i++) {
+//             const currentMember = hiringTeamMembers[i]
 
-            if (currentMember["role"]==="HIRING_MANAGER") {
-                hiringManagerURL = currentMember.actions.details.url
-            }
-        }
+//             if (currentMember["role"]==="HIRING_MANAGER") {
+//                 hiringManagerURL = currentMember.actions.details.url
+//             }
+//         }
 
-        var hiringManager
+//         var hiringManager
 
-        if(hiringManagerURL) {
-            const userInfoQuery = await Axios.get(hiringManagerURL, {
-                headers: {
-                    "X-SmartToken": smartKey
-                }
-            })
+//         if(hiringManagerURL) {
+//             const userInfoQuery = await Axios.get(hiringManagerURL, {
+//                 headers: {
+//                     "X-SmartToken": smartKey
+//                 }
+//             })
 
-            hiringManager = userInfoQuery.data.firstName + " " + userInfoQuery.data.lastName
+//             hiringManager = userInfoQuery.data.firstName + " " + userInfoQuery.data.lastName
 
-            console.log(hiringManager)
-        }
-        else {
-            hiringManager = "Not added yet"
-        }
+//             console.log(hiringManager)
+//         }
+//         else {
+//             hiringManager = "Not added yet"
+//         }
 
-        for (i=0; i < hiringTeamMembers.length; i++) {
-            const user = hiringTeamMembers[i]
+//         for (i=0; i < hiringTeamMembers.length; i++) {
+//             const user = hiringTeamMembers[i]
 
-            const userQueryURL = user.actions.details.url
+//             const userQueryURL = user.actions.details.url
 
-            const userInfoQuery = await Axios.get(userQueryURL, {
-                headers: {
-                    "X-SmartToken": smartKey
-                }
-            })
+//             const userInfoQuery = await Axios.get(userQueryURL, {
+//                 headers: {
+//                     "X-SmartToken": smartKey
+//                 }
+//             })
 
-            let formattedRole
+//             let formattedRole
 
-            switch(user.role) {
-                case "HIRING_MANAGER": 
-                    formattedRole = "Hiring Manager"
-                break;
+//             switch(user.role) {
+//                 case "HIRING_MANAGER": 
+//                     formattedRole = "Hiring Manager"
+//                 break;
 
-                case "RECRUITER": 
-                    formattedRole = "Recruiter"
-                break;
+//                 case "RECRUITER": 
+//                     formattedRole = "Recruiter"
+//                 break;
 
-                case "INTERVIEWER": 
-                    formattedRole = "Interviewer"
-                break;
+//                 case "INTERVIEWER": 
+//                     formattedRole = "Interviewer"
+//                 break;
 
-                case "EXECUTIVE": 
-                    formattedRole = "Executive"
-                break;
+//                 case "EXECUTIVE": 
+//                     formattedRole = "Executive"
+//                 break;
 
-                case "COORDINATOR":
-                    formattedRole = "Coordinator"
-                break;
-                default: 
-                    formattedRole = user.role
-            }
+//                 case "COORDINATOR":
+//                     formattedRole = "Coordinator"
+//                 break;
+//                 default: 
+//                     formattedRole = user.role
+//             }
 
-            const userData = {
-                email: userInfoQuery.data.email,
-                firstName: userInfoQuery.data.firstName, 
-                lastName: userInfoQuery.data.lastName,
-                hiringTeamRole: user.role
-            }
+//             const userData = {
+//                 email: userInfoQuery.data.email,
+//                 firstName: userInfoQuery.data.firstName, 
+//                 lastName: userInfoQuery.data.lastName,
+//                 hiringTeamRole: user.role
+//             }
 
-            const dbUser = await db.User.findOne ({username: userData.email})
+//             const dbUser = await db.User.findOne ({username: userData.email})
 
-                // If user is in our database, then send slack message
+//                 // If user is in our database, then send slack message
 
-            if (dbUser) {
+//             if (dbUser) {
 
-                console.log(dbUser)
+//                 console.log(dbUser)
 
-                const token = dbUser.slackAppAuthToken
+//                 const token = dbUser.slackAppAuthToken
 
-                const channel = dbUser.slackUserID
+//                 const channel = dbUser.slackUserID
 
-                var blocks =  [
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "You have been added to a hiring team!",
-                                "emoji": true
-                            }
-                        },
-                        {
-                            "type": "divider"
-                        },
-                        {
-                            "type": "section",
-                            "fields": [
-                                {
-                                    "type": "plain_text",
-                                    "text": "Job Title: " + jobTitle,
-                                    "emoji": true
-                                },
-                                {
-                                    "type": "plain_text",
-                                    "text": "Location: " + jobLocation,
-                                    "emoji": true
-                                },
-                                {
-                                    "type": "plain_text",
-                                    "text": "Hiring Manager: " + hiringManager,
-                                    "emoji": true
-                                },
-                                {
-                                    "type": "plain_text",
-                                    "text": "Your Role: " + formattedRole,
-                                    "emoji": true
-                                }
-                            ]
-                        },
-                        {
-                            "type": "divider"
-                        },
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "mrkdwn",
-                                "text": "Click to view job in SmartRecruiters."
-                            },
-                            "accessory": {
-                                "type": "button",
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": "View Job",
-                                    "emoji": true
-                                },
-                                "value": "View Job",
-                                "url": linkToJob,
-                                "action_id": "button-action"
-                            }
-                        }
-                    ]
+//                 var blocks =  [
+//                         {
+//                             "type": "section",
+//                             "text": {
+//                                 "type": "plain_text",
+//                                 "text": "You have been added to a hiring team!",
+//                                 "emoji": true
+//                             }
+//                         },
+//                         {
+//                             "type": "divider"
+//                         },
+//                         {
+//                             "type": "section",
+//                             "fields": [
+//                                 {
+//                                     "type": "plain_text",
+//                                     "text": "Job Title: " + jobTitle,
+//                                     "emoji": true
+//                                 },
+//                                 {
+//                                     "type": "plain_text",
+//                                     "text": "Location: " + jobLocation,
+//                                     "emoji": true
+//                                 },
+//                                 {
+//                                     "type": "plain_text",
+//                                     "text": "Hiring Manager: " + hiringManager,
+//                                     "emoji": true
+//                                 },
+//                                 {
+//                                     "type": "plain_text",
+//                                     "text": "Your Role: " + formattedRole,
+//                                     "emoji": true
+//                                 }
+//                             ]
+//                         },
+//                         {
+//                             "type": "divider"
+//                         },
+//                         {
+//                             "type": "section",
+//                             "text": {
+//                                 "type": "mrkdwn",
+//                                 "text": "Click to view job in SmartRecruiters."
+//                             },
+//                             "accessory": {
+//                                 "type": "button",
+//                                 "text": {
+//                                     "type": "plain_text",
+//                                     "text": "View Job",
+//                                     "emoji": true
+//                                 },
+//                                 "value": "View Job",
+//                                 "url": linkToJob,
+//                                 "action_id": "button-action"
+//                             }
+//                         }
+//                     ]
 
-                const queryBlocks = JSON.stringify(blocks)
+//                 const queryBlocks = JSON.stringify(blocks)
 
-                const body = qs.stringify({
-                    channel: channel,
-                    blocks: queryBlocks
-                })
+//                 const body = qs.stringify({
+//                     channel: channel,
+//                     blocks: queryBlocks
+//                 })
 
-                await Axios.post("https://slack.com/api/chat.postMessage", body, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    }
-                })
+//                 await Axios.post("https://slack.com/api/chat.postMessage", body, {
+//                     headers: {
+//                         Authorization: `Bearer ${token}`,
+//                         "Content-Type": "application/x-www-form-urlencoded"
+//                     }
+//                 })
 
-            }
-        }
-    }
-    catch (error) {
-        console.log(error)
-    }
+//             }
+//         }
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
     
-})
+// })
 
-router.post("/offerCreated", (req, res) => {
+// router.post("/offerCreated", (req, res) => {
 
-    const hookSecret = req.headers["x-hook-secret"]
-    res.set("X-Hook-Secret", hookSecret)
-    res.status(200).send("success!")
+//     const hookSecret = req.headers["x-hook-secret"]
+//     res.set("X-Hook-Secret", hookSecret)
+//     res.status(200).send("success!")
 
-})
+// })
 
 
 
-module.exports = router;
+// module.exports = router;
